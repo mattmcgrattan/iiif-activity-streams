@@ -20,28 +20,31 @@ Update `docker_settings.py` for docker usage.
 
 ### Main Config
 
-_collection_    The IIIF Collection to base the stream on
+__collection__    The IIIF Collection to base the stream on
 
-_check_last_modified_  Set to True to dereference every manifest and check for last-modified heders to set the startTime
+__check_last_modified__  Set to True to dereference every manifest and check for last-modified heders to set the startTime
 
-_use_redis_     Use Redis for local caching. Docker usage assumes Redis, but local/virtualenv can use alternative caching methods if set to False.
+__use_redis__     Use Redis for local caching. Docker usage assumes Redis, but local/virtualenv can/will use alternative caching methods if set to False.
 
-_event_ids_     Set to True to store local versions of the individual events, and serve up with dereferenceable IDs.
+__event_ids__     Set to True to store local versions of the individual events, and serve up with dereferenceable IDs.
 
 Other settings alter cache timeouts, and whether to cache requests to the IIIF services.
 
 Docker settings will:
 
-Bring up Redis
+* Bring up Redis
 
-Use Redis for local caching of IIIF requests, and for activity streams results.
+* Use Redis for local caching of IIIF requests, and for activity streams results.
 
-if _check_last_modified_ is set to True, the first time a stream is loaded, it may be slow, but it should be fast thereafter.
+If __check_last_modified__ is set to _True_, the first time a stream is loaded, it may be slow, but it should be fast thereafter.
 
-Set _redis_ttl_, _cache_requests_timeout_ and _cache_timeout_ to suitably long values for your service.
+Set __redis_ttl__, __cache_requests_timeout__ and __cache_timeout__ to suitably long values for your service.
 
 ## Run using Docker with docker-compose
 
+Running with Docker is a quick and easy way to test locally. 
+
+Change the value for __collection__ in `docker_settings.py` and go.
 
 Will build Redis and Flask/uWSGI apps and link them.
 
