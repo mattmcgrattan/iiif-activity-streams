@@ -1,7 +1,7 @@
 # ida-activity-streams
 Stream manifest and collection create, update, delete events as an ActivityStreams feed.
 
-This is a proof of concept illustration. Please read LICENSE.md for standard MIT license conditions.
+This is a proof of concept illustration. Please read LICENSE for standard MIT license conditions.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
