@@ -1,5 +1,6 @@
-# ida-activity-streams
-Stream manifest and collection create, update, delete events as an ActivityStreams feed.
+# IIIF Activity Streams
+
+Turn a IIIF top level collection into a paged Activity Stream. Please read the `settings.py` and `docker_settings.py` files for more information on setting up.
 
 This is a proof of concept illustration. Please read LICENSE for standard MIT license conditions.
 
