@@ -75,7 +75,7 @@ if hasattr(settings, 'verbose'):
 else:
     verbose = False
 
-# Verbose print statements.
+# Set default page size.
 if hasattr(settings, 'page_size'):
     pagesize = settings.page_size
 else:
@@ -502,7 +502,6 @@ def stream(identifier):
     except IndexError:
         return custom_error('That results page does not exist', 404)
     except:
-        raise
         return custom_error('An unexpected error occurred', 500)
 
 
