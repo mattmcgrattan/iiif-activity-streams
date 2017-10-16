@@ -22,7 +22,7 @@ Update `docker_settings.py` for docker usage.
 
 __collection__    The IIIF Collection to base the stream on
 
-__check_last_modified__  Set to True to dereference every manifest and check for last-modified heders to set the startTime
+__check_last_modified__  Set to True to dereference every manifest and check for last-modified headers to set the startTime
 
 __use_redis__     Use Redis for local caching. Docker usage assumes Redis, but local/virtualenv can/will use alternative caching methods if set to False.
 
@@ -44,13 +44,14 @@ Set __redis_ttl__, __cache_requests_timeout__ and __cache_timeout__ to suitably 
 
 Running with Docker is a quick and easy way to test locally. 
 
-Change the value for __collection__ in `docker_settings.py` and go.
-
-Will build Redis and Flask/uWSGI apps and link them.
+N.B. Will build Redis and Flask/uWSGI apps and link them.
 
 `git clone https://github.com/mattmcgrattan/iiif-activity-streams.git`
 
 `cd iiif-activity-streams/`
+
+Change the value for __collection__ in `docker_settings.py` and ...
+
 
 `docker-compose up --build -d`
 
