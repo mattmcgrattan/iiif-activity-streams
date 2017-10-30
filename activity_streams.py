@@ -38,7 +38,7 @@ if hasattr(settings, 'cache_requests'):
 else:
     cache_requests = False
 
-# Expiry time for IIIF cached resources.
+# Expiry time for IIIF/requests cached resources.
 if hasattr(settings, 'cache_requests_timeout'):
     cache_requests_timeout = settings.cache_requests_timeout
 else:
@@ -56,7 +56,7 @@ if hasattr(settings, 'use_redis'):
 else:
     use_redis = False
 
-# Use Redis for caching throughout.
+# Set the redis host, will default to localhost.
 if hasattr(settings, 'redis_host'):
     redis_host = settings.redis_host
 else:
@@ -153,6 +153,7 @@ def crossdomain(origin=None, methods=None, headers=None,
                 automatic_options=True):
     """
     Decorate the Flask response with CORS headers.
+
     :param origin:
     :param methods:
     :param headers:
@@ -203,7 +204,8 @@ def crossdomain(origin=None, methods=None, headers=None,
 
 def custom_error(message, status_code):
     """
-    Return a custom error message as a Flask response
+    Return a custom error message as a simple Flask response
+
     :param message: message to include
     :param status_code: status code
     :return: json response
@@ -213,9 +215,9 @@ def custom_error(message, status_code):
     return response
 
 
-def get_iiif_resource(resource_uri):
+def get_json_resource(resource_uri):
     """
-    Fetch a IIIF uri, return Python object.
+    Get a uri which returns JSON, return Python object.
 
     Returns None if the request status code is 4xx or 5xx.
 
@@ -383,18 +385,15 @@ def as_paged(number_of_members, member_list, collection, id_base, page_size):
     result_size = ceildiv(number_of_members, page_size)
     for as_page in as_pages(numb_m=number_of_members,
                             members=member_list, collection_id=collection, base_id=id_base, size=page_size):
+        first = False
+        second = False
+        last = False
         if count == 0:
             first = True
-        else:
-            first = False
-        if count == result_size - 1:
+        elif count == result_size - 1:
             last = True
-        else:
-            last = False
-        if count == 1:
+        elif count == 1:
             second = True
-        else:
-            second = False
         results_page = {'@context': 'http://activitystreams/context.json',
                         'type': 'CollectionPage'
                         }
@@ -488,9 +487,10 @@ def stream(identifier):
         service_address = request.url_root + 'as/'
     else:
         service_address = service_base_address
+    # noinspection PyBroadException
     try:
         collection_uri = settings.collection
-        number_of_members, member_list = get_members(get_iiif_resource(resource_uri=collection_uri))
+        number_of_members, member_list = get_members(get_json_resource(resource_uri=collection_uri))
         activity_streams_pages = streamer(number_of_members=number_of_members, member_list=member_list,
                                           top_uri=collection_uri, service_uri=service_address,
                                           size_of_page=pagesize)
