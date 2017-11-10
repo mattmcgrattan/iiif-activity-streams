@@ -394,7 +394,7 @@ def as_paged(number_of_members, member_list, collection, id_base, page_size):
             last = True
         elif count == 1:
             second = True
-        results_page = {'@context': 'https://www.w3.org/ns/activitystreams.jsonld',
+        results_page = {'@context': 'https://www.w3.org/ns/activitystreams',
                         'type': 'CollectionPage'
                         }
         if not last:
