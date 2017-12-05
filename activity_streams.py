@@ -270,7 +270,7 @@ def chunked_members(num_memb, memb, chunksize=10):
         return
 
 
-def member_to_as_item(item, collection, url_base, start_time=str(arrow.utcnow()), check_modified=check_last_modified):
+def member_to_as_item(item, collection, url_base, end_time=str(arrow.utcnow()), check_modified=check_last_modified):
     """
     Convert manifest/member to an ActivityStreams event.
 
@@ -295,7 +295,7 @@ def member_to_as_item(item, collection, url_base, start_time=str(arrow.utcnow())
     :param collection: IIIF Collection
     :param item: Python object for the manifest/member item
     :param url_base: base to use when constructing the URI for the dereferenceable event
-    :param start_time: time, defaults to utcnow()
+    :param end_time: time, defaults to utcnow()
     :param check_modified: if True, attempt to de-reference the manifest and check the last-modified date.
     :return: object for the ActivityStreams event
     """
@@ -318,9 +318,9 @@ def member_to_as_item(item, collection, url_base, start_time=str(arrow.utcnow())
                 if 'last-modified' in h:
                     last_m = arrow.get(dateparser.parse(h['last-modified']))
                     if last_m:
-                        start_time = str(last_m)
+                        end_time = str(last_m)
         obj = {'object': {'id': item['@id'], 'type': item['@type'], 'label': item['label'],
-                          'within': collection}, 'startTime': start_time}
+                          'within': collection}, 'endTime': end_time}
         # Grab optional settings
         if hasattr(settings, 'verb'):
             obj['type'] = settings.verb
