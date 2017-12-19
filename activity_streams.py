@@ -12,6 +12,8 @@ from flask_cache import Cache
 from functools import update_wrapper
 from simplekv.fs import FilesystemStore
 import dateparser
+from collections import OrderedDict
+
 
 import settings
 
@@ -23,6 +25,7 @@ import settings
 
 # Flask app.
 app = flask.Flask(__name__)
+app.config["JSON_SORT_KEYS"] = False
 
 # Set a bunch of defaults and initialise the local caching if used.
 
@@ -380,38 +383,33 @@ def as_paged(number_of_members, member_list, collection, id_base, page_size):
     :param page_size: page size
     :return: ActivityStreams page objects, size of results
     """
-    count = 0
+    count = 1
     # number of pages in the final result set
     result_size = ceildiv(number_of_members, page_size)
+    print('Paged result size', result_size)
     for as_page in as_pages(numb_m=number_of_members,
                             members=member_list, collection_id=collection, base_id=id_base, size=page_size):
         first = False
-        second = False
         last = False
-        if count == 0:
+        if count == 1:
             first = True
-        elif count == result_size - 1:
+        elif count == result_size:
             last = True
-        elif count == 1:
-            second = True
-        results_page = {'@context': 'https://www.w3.org/ns/activitystreams',
-                        'type': 'CollectionPage'
-                        }
-        if not last:
-            results_page['next'] = id_base + str(count + 1)
-            results_page['last'] = id_base + str(result_size - 1)
+        results_page = OrderedDict()
+        results_page['@context'] = [
+                            "http://iiif.io/api/presentation/3/context.json",
+                            "https://www.w3.org/ns/activitystreams"
+                            ]
+        results_page['@id'] = id_base + str(count)
+        results_page['type'] = 'CollectionPage'
+        results_page['partOf'] = {'id': id_base, 'type': 'Collection'}
         if not first:
-            if not second:
-                results_page['previous'] = id_base + str(count - 1)
-            else:
-                results_page['previous'] = id_base
-            results_page['items'] = as_page['items']
-            results_page['partOf'] = id_base
-            results_page['@id'] = id_base + str(count)
-        else:
-            results_page['@id'] = id_base
-            results_page['total'] = number_of_members
-            results_page['first'] = {'items': as_page['items']}
+            results_page['previous'] = {'id': id_base + str(count - 1), 'type': 'CollectionPage'}
+        if not last:
+            if count + 1 != result_size:
+                results_page['next'] = {'id': id_base + str(count + 1), 'type': 'CollectionPage'}
+            results_page['last'] = {'id': id_base + str(result_size), 'type': 'CollectionPage'}
+        results_page['items'] = as_page['items']
         yield results_page, result_size
         count += 1
 
@@ -442,10 +440,35 @@ def page_slicer(activity_streams_pages, position):
     :return: ActivityStreams page object
     """
     try:
-        page = next(itertools.islice(activity_streams_pages, position, position + 1))
+        page = next(itertools.islice(activity_streams_pages, position - 1, position))
         return page
     except StopIteration:
         return
+
+
+def gen_top(service_uri, no_pages, num_mem, label=None):
+    """
+    Generate the top level collection page.
+
+    :param service_uri: base uri for the AS paged site.
+    :param no_pages:
+    :param num_mem:
+    :param label:
+    :return: dict
+    """
+    top = OrderedDict()
+    top['context'] = [
+                "http://iiif.io/api/presentation/3/context.json",
+                "https://www.w3.org/ns/activitystreams"
+            ]
+    top['id'] = service_uri
+    top['type'] = 'Collection'
+    if label:
+        top['label'] = label
+    top['total'] = num_mem
+    top['first'] = {'id': service_uri + str(1), 'type': 'CollectionPage'}
+    top['last'] = {'id': service_uri + str(no_pages), 'type': 'CollectionPage'}
+    return top
 
 
 @app.route('/activity/<path:identifier>', methods=['GET'])
@@ -491,6 +514,11 @@ def stream(identifier):
     try:
         collection_uri = settings.collection
         number_of_members, member_list = get_members(get_json_resource(resource_uri=collection_uri))
+        result_size = ceildiv(number_of_members, pagesize)
+        print('Result size', result_size, number_of_members)
+        if page_number == 0:
+            return jsonify(gen_top(service_uri=service_address, no_pages=result_size, num_mem=number_of_members,
+                                   label='Top level collection'))
         activity_streams_pages = streamer(number_of_members=number_of_members, member_list=member_list,
                                           top_uri=collection_uri, service_uri=service_address,
                                           size_of_page=pagesize)
