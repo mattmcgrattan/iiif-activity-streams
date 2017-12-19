@@ -516,7 +516,7 @@ def stream(identifier):
         number_of_members, member_list = get_members(get_json_resource(resource_uri=collection_uri))
         if page_number == 0:
             return jsonify(gen_top(service_uri=service_address, no_pages=ceildiv(number_of_members, pagesize),
-                                   num_mem=number_of_members, label='Top level collection'))
+                                   num_mem=number_of_members, label='Top level collection: ' + collection_uri))
         activity_streams_pages = streamer(number_of_members=number_of_members, member_list=member_list,
                                           top_uri=collection_uri, service_uri=service_address,
                                           size_of_page=pagesize)
