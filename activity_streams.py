@@ -514,11 +514,9 @@ def stream(identifier):
     try:
         collection_uri = settings.collection
         number_of_members, member_list = get_members(get_json_resource(resource_uri=collection_uri))
-        result_size = ceildiv(number_of_members, pagesize)
-        print('Result size', result_size, number_of_members)
         if page_number == 0:
-            return jsonify(gen_top(service_uri=service_address, no_pages=result_size, num_mem=number_of_members,
-                                   label='Top level collection'))
+            return jsonify(gen_top(service_uri=service_address, no_pages=ceildiv(number_of_members, pagesize),
+                                   num_mem=number_of_members, label='Top level collection'))
         activity_streams_pages = streamer(number_of_members=number_of_members, member_list=member_list,
                                           top_uri=collection_uri, service_uri=service_address,
                                           size_of_page=pagesize)
