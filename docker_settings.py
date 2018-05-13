@@ -9,10 +9,11 @@
 #
 # Unless you _know_ you have last-modified header dates you want to expose, set to False.
 
-check_last_modified = False  
+check_last_modified = False
 
 # Collection to provide a stream for
-collection = 'https://labs2.artstor.org/iiif/ssc/manifest.json'
+
+collection = 'https://manifests.dlcs-ida.org/top'
 
 # Will default to 'Update' if not set.
 verb = 'Update'

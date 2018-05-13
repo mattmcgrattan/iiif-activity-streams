@@ -14,4 +14,4 @@ services:
     links:
       - redis:redis
     ports:
-      - "8000:8000"
+      - "9904:8000"
