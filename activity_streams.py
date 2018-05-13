@@ -322,7 +322,13 @@ def member_to_as_item(item, collection, url_base, end_time=str(arrow.utcnow()), 
                     last_m = arrow.get(dateparser.parse(h['last-modified']))
                     if last_m:
                         end_time = str(last_m)
-        obj = {'object': {'id': item['@id'], 'type': item['@type'], 'label': item['label'],
+        if item['@type'] == 'sc:Manifest':
+            obj_type = 'Manifest'
+        elif item['@type'] == 'sc:Collection':
+            obj_type = 'Collection'
+        else:
+            obj_type = item['@type']
+        obj = {'object': {'id': item['@id'], 'type': obj_type, 'label': item['label'],
                           'within': collection}, 'endTime': end_time}
         # Grab optional settings
         if hasattr(settings, 'verb'):
@@ -402,14 +408,13 @@ def as_paged(number_of_members, member_list, collection, id_base, page_size):
                             ]
         results_page['@id'] = id_base + str(count)
         results_page['type'] = 'CollectionPage'
-        results_page['partOf'] = {'id': id_base, 'type': 'Collection'}
+        results_page['partOf'] = {'id': id_base, 'type': 'OrderedCollection'}
         if not first:
-            results_page['previous'] = {'id': id_base + str(count - 1), 'type': 'CollectionPage'}
+            results_page['previous'] = {'id': id_base + str(count - 1), 'type': 'OrderedCollectionPage'}
         if not last:
-            if count + 1 != result_size:
-                results_page['next'] = {'id': id_base + str(count + 1), 'type': 'CollectionPage'}
-            results_page['last'] = {'id': id_base + str(result_size), 'type': 'CollectionPage'}
-        results_page['items'] = as_page['items']
+            results_page['next'] = {'id': id_base + str(count + 1), 'type': 'OrderedCollectionPage'}
+            # results_page['last'] = {'id': id_base + str(result_size), 'type': 'OrderedCollectionPage'}
+        results_page['orderedItems'] = as_page['items']
         yield results_page, result_size
         count += 1
 
@@ -462,12 +467,12 @@ def gen_top(service_uri, no_pages, num_mem, label=None):
                 "https://www.w3.org/ns/activitystreams"
             ]
     top['id'] = service_uri
-    top['type'] = 'Collection'
+    top['type'] = 'OrderedCollection'
     if label:
         top['label'] = label
     top['total'] = num_mem
-    top['first'] = {'id': service_uri + str(1), 'type': 'CollectionPage'}
-    top['last'] = {'id': service_uri + str(no_pages), 'type': 'CollectionPage'}
+    top['first'] = {'id': service_uri + str(1), 'type': 'OrderedCollectionPage'}
+    top['last'] = {'id': service_uri + str(no_pages), 'type': 'OrderedCollectionPage'}
     return top
 
 
@@ -513,6 +518,7 @@ def stream(identifier):
     # noinspection PyBroadException
     try:
         collection_uri = settings.collection
+        print(collection_uri)
         number_of_members, member_list = get_members(get_json_resource(resource_uri=collection_uri))
         if page_number == 0:
             return jsonify(gen_top(service_uri=service_address, no_pages=ceildiv(number_of_members, pagesize),
@@ -527,7 +533,8 @@ def stream(identifier):
             return custom_error('That results page does not exist', 404)
     except IndexError:
         return custom_error('That results page does not exist', 404)
-    except:
+    except Exception as e:
+        print(e)
         return custom_error('An unexpected error occurred', 500)
 
 

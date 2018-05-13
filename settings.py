@@ -12,7 +12,7 @@
 check_last_modified = False
 
 # Collection to provide a stream for
-collection = 'https://labs2.artstor.org/iiif/ssc/manifest.json'
+collection = 'http://manifests.dlcs-ida.org/top'
 
 # Will default to 'Update' if not set.
 verb = 'Update'
