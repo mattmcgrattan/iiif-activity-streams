@@ -462,7 +462,7 @@ def gen_top(service_uri, no_pages, num_mem, label=None):
     :return: dict
     """
     top = OrderedDict()
-    top['context'] = [
+    top['@context'] = [
                 "http://iiif.io/api/presentation/3/context.json",
                 "https://www.w3.org/ns/activitystreams"
             ]
