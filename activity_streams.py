@@ -403,7 +403,7 @@ def as_paged(number_of_members, member_list, collection, id_base, page_size):
             last = True
         results_page = OrderedDict()
         results_page['@context'] = [
-                            "http://iiif.io/api/presentation/3/context.json",
+                            "http://iiif.io/api/presentation/2/context.json",
                             "https://www.w3.org/ns/activitystreams"
                             ]
         results_page['@id'] = id_base + str(count)
@@ -463,7 +463,7 @@ def gen_top(service_uri, no_pages, num_mem, label=None):
     """
     top = OrderedDict()
     top['@context'] = [
-                "http://iiif.io/api/presentation/3/context.json",
+                "http://iiif.io/api/presentation/2/context.json",
                 "https://www.w3.org/ns/activitystreams"
             ]
     top['id'] = service_uri
