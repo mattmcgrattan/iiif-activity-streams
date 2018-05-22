@@ -410,7 +410,7 @@ def as_paged(number_of_members, member_list, collection, id_base, page_size):
         results_page['type'] = 'OrderedCollectionPage'
         results_page['partOf'] = {'id': id_base, 'type': 'OrderedCollection'}
         if not first:
-            results_page['previous'] = {'id': id_base + str(count - 1), 'type': 'OrderedCollectionPage'}
+            results_page['prev'] = {'id': id_base + str(count - 1), 'type': 'OrderedCollectionPage'}
         if not last:
             results_page['next'] = {'id': id_base + str(count + 1), 'type': 'OrderedCollectionPage'}
             # results_page['last'] = {'id': id_base + str(result_size), 'type': 'OrderedCollectionPage'}
