@@ -407,7 +407,7 @@ def as_paged(number_of_members, member_list, collection, id_base, page_size):
                             "https://www.w3.org/ns/activitystreams"
                             ]
         results_page['@id'] = id_base + str(count)
-        results_page['type'] = 'CollectionPage'
+        results_page['type'] = 'OrderedCollectionPage'
         results_page['partOf'] = {'id': id_base, 'type': 'OrderedCollection'}
         if not first:
             results_page['previous'] = {'id': id_base + str(count - 1), 'type': 'OrderedCollectionPage'}
