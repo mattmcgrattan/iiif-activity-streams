@@ -2,6 +2,8 @@
 
 Turn a IIIF top level collection into a paged Activity Stream. Please read the `settings.py` and `docker_settings.py` files for more information on setting up.
 
+N.B. this code (for now) assumes a flat single level Collection, rather than nested collections.
+
 This is a proof of concept illustration. Please read LICENSE for standard MIT license conditions.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
